@@ -4,26 +4,48 @@ package com.kln.swst.simplerest.controller;
 import com.kln.swst.simplerest.model.Student;
 import com.kln.swst.simplerest.repository.StudentRepository;
 import com.sun.javaws.exceptions.InvalidArgumentException;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/students")
 public class Studentcontroller {
+
+    @Autowired
     StudentRepository studentRepository;
 
     @RequestMapping(method = RequestMethod.GET)
-    public Student get() throws IllegalArgumentException{
-        Student student = new Student();
-        student.setName("Anne");
-        student.setAge(30);
-        return student;
+    public Iterable<Student>get() throws IllegalArgumentException{
+
+        return studentRepository.findAll();
+    }
+    @RequestMapping(value = "/name/{name}",method = RequestMethod.GET)
+    public List<Student> get(@PathVariable String name) throws IllegalArgumentException {
+
+        return studentRepository.findAllByName(name);
+
+    }
+    @RequestMapping(value = "/{id}",method = RequestMethod.GET)
+    public Student get(@PathVariable Long id) throws IllegalArgumentException {
+
+        return studentRepository.findById(id).get();
+    }
+
+    @RequestMapping(value = "/{id}",method = RequestMethod.DELETE)
+    public void delete(@PathVariable Long id) throws IllegalArgumentException {
+
+        studentRepository.deleteById(id);
     }
 
     @RequestMapping(method = RequestMethod.POST)
     public Student save(@RequestBody Student student){
+        return studentRepository.save(student);
+    }
+
+    @RequestMapping(method = RequestMethod.PUT)
+    public Student update(@RequestBody Student student){
         return studentRepository.save(student);
     }
 
